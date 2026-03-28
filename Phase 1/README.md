@@ -32,9 +32,10 @@ We're aiming for 15–20 peer-reviewed papers across these areas:
 
 ## How we're documenting it
 
-- notes.md — running log, updated as we read. One entry per session, written in our own words
-- papers.md — structured summary of every paper: what it's about, key findings, what we didn't understand, how it connects to NeuroBeat
-- findings.md — written at the end of Phase 1. What we concluded, what's still open, and what questions Phase 2 needs to answer
+- [notes.md](https://github.com/ernie-bernie/NeuroBeat/blob/main/Phase%201/notes.md) — running log, updated as we read. One entry per subject, written in our own words
+- [papers.md](https://github.com/ernie-bernie/NeuroBeat/blob/main/Phase%201/papers.md) — structured summary of every paper: what it's about, key findings, what we didn't understand, how it connects to NeuroBeat
+  - [Paper 1](https://github.com/ernie-bernie/NeuroBeat/blob/main/Phase%201/papers.md#paper-1) - Study examining how anxiety levels affect a person's ability to voluntarily control their alpha waves, specifically whether anxiety impacts the ability to enhance or suppress alpha.
+- [findings.md](https://github.com/ernie-bernie/NeuroBeat/blob/main/Phase%201/findings.md) — written at the end of Phase 1. What we concluded, what's still open, and what questions Phase 2 needs to answer
 
 ## Phase 1 checklist
 
