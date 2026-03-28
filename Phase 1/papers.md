@@ -55,3 +55,38 @@ Suggests that high-anxiety users may struggle to reach enhanced alpha states, me
 **Questions it raised:**
 - Would this finding hold with modern EEG equipment?
 - Is there a more recent study that replicates or challenges this?
+
+--------
+### Paper 2
+
+**Title:** Low delta and high alpha power are associated with better conflict control and working memory in high mindfulness, low anxiety individuals
+
+**Authors:** Satish Jaiswal , Shao-Yang Tsai , Chi-Hung Juan , Neil G Muggleton , Wei-Kuang Liang
+
+**Year:** 2019
+
+**Journal:** Social Cognitive and Affective Neuroscience (SCAN)
+
+**Publisher:** Oxford University Press
+
+**Link:** https://academic.oup.com/scan/article/14/6/645/5497468
+
+**Read on:** 3/28/26
+
+**What it's about:**
+Study examining how delta and alpha band power relate to cognitive performance and anxiety levels in people with varying degrees of mindfulness. Found that low delta and high alpha together are associated with better mental control in low-anxiety individuals.
+
+**Key findings:**
+- High alpha power is associated with low anxiety and better cognitive
+  control
+- Low delta power also plays a role alongside alpha — not just alpha alone
+- Mindful, low-anxiety individuals show a distinct EEG signature compared
+  to high-anxiety individuals
+
+**How it connects to NeuroBeat:**
+Supports alpha as a reliable marker of calm, low-anxiety states. Pairs with Paper 1 by showing if anxiety suppresses alpha control (Paper 1), and high alpha is associated with low anxiety and better cognitive function (Paper 2), then increasing alpha via music is a meaningful and measurable therapeutic target for NeuroBeat.
+
+**Questions it raised:**
+- Does mindfulness training produce the same alpha signature as calming music?
+- Could NeuroBeat's music system produce short-term effects similar to what mindfulness produces long-term?
+
