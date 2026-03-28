@@ -50,7 +50,8 @@
 - High alpha = calm and relaxed
 - Low alpha (suppressed) = anxious
 - Enhanced alpha = above-baseline calm. The goal of NeuroBeat isn't just reducing anxiety, it's actively pushing toward an enhanced alpha state through music.
-- The brain's threat-response system (amygdala, stress hormones) actively shifts processing toward higher-frequency, more vigilant states if you are anxious. Alpha is essentially incompatible with being on high alert 
+- The brain's threat-response system (amygdala, stress hormones) actively shifts processing toward higher-frequency, more vigilant states if you are anxious. Alpha is essentially incompatible with being on high alert
+- A [paper](https://github.com/ernie-bernie/NeuroBeat/blob/main/Phase%201/papers.md#paper-2) showed that low delta and high alpha together are associated with better mental control in low-anxiety individuals.
 
 
 
