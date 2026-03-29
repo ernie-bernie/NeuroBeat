@@ -17,6 +17,16 @@ We're specifically focused on Parkinson's disease and epilepsy, two conditions w
 
 This is a multi-year project. Were starting with research and foundations, and building toward real hardware, real data, and a published paper.
 
+## Where this started
+
+NeuroBeat didn't come out of nowhere. It grew out of a previous project called **[Mood of the Room](https://github.com/ernie-bernie/Mood-of-the-Room)** — an attempt to detect the emotional atmosphere of a physical space using Arduino sensors measuring light, sound, and motion.
+
+That project taught me the fundamentals of sensor noise, signal averaging, and classification. But it also revealed a limitation: environmental sensors can tell you what a room looks like, not how a person actually feels.
+
+That gap led to a single question — what if instead of measuring the environment around a person, we measured the brain directly?
+
+That's NeuroBeat.
+
 ## Roadmap
 ### Phase 1 (in progress)
 
