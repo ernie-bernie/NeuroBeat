@@ -13,8 +13,6 @@ NeuroBeat is a long-term independent research project at the intersection of neu
 
 The core question: can we measure how different types of music shift brain activity — and use that to help people with neurological conditions?
 
-We're specifically focused on Parkinson's disease and epilepsy, two conditions where music therapy has shown real clinical promise but the underlying neural mechanisms aren't fully understood. This project aims to explore those mecanisms using EEG brain data, machine learning, and eventually a live closed-loop system that detects brain state and adaptively selects music in response.
-
 This is a multi-year project. Were starting with research and foundations, and building toward real hardware, real data, and a published paper.
 
 ## Where this started
@@ -107,7 +105,7 @@ Publish and apply
 - EEG acquisition: BrainFlow (synthetic → Cyton in Phase 3)
 - Signal processing: MNE-Python, SciPy, NumPy
 - Machine learning: scikit-learn, PyTorch (Phase 3+)
-- Visualization:Matplotlib, Streamlit
+- Visualization: Matplotlib, Streamlit
 - Data: DEAP dataset (Phase 2), live EEG (Phase 3)
 
 ### Status
