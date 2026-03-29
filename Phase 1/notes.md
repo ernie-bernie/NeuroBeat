@@ -67,8 +67,15 @@
 
 ### Music on EEG Signals:
 - In a recent [study](https://github.com/ernie-bernie/NeuroBeat/blob/main/Phase%201/papers.md#paper-3), researchers found that listening to different types of music changed brain wave bands
-- They concluded that Egyptian classical music led to a relaxed state of mind, while Egyptian folk music significantly slowed the brain rhythm
+- They concluded that Egyptian classical music led to a relaxed EEG pattern, while Egyptian folk music significantly slowed the brain rhythm
 - This leaves the question of if this applies to other types of music, and if it is the same for everyone
+- In a different [paper](https://github.com/ernie-bernie/NeuroBeat/blob/main/Phase%201/papers.md#paper-4), researchers noticed that listening to alpha music, people generally got more calm
+- Alpha music is music specifically composed to entrain the brain toward alpha frequencies, often slow tempo with minimal complexity
+- This change directly changed in a measurable, specific way
+- However, this was dependent on personality type, as people with a type-A personality did not have the same changes as others
+- This could imply that different types of music calms different types of people down, which is what NeuroBeat wants to find per person
+- NeuroBeat will need to test whether these findings generalize to common genres like ambient, classical, or binaural beats
+- Combined with Papers 1 and 2, this suggests that music can produce the exact alpha shifts that anxiety suppresses, making music a plausible intervention for anxious brain states
 
 
 
