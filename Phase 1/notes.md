@@ -51,17 +51,20 @@
 - Low alpha (suppressed) = anxious
 - Enhanced alpha = above-baseline calm. The goal of NeuroBeat isn't just reducing anxiety, it's actively pushing toward an enhanced alpha state through music.
 - The brain's threat-response system (amygdala, stress hormones) actively shifts processing toward higher-frequency, more vigilant states if you are anxious. Alpha is essentially incompatible with being on high alert
+- The amygdala triggers what's called the fight-or-flight response, which is the mechanism that floods the brain with stress hormones and pushes it into high-frequency states
 - A [paper](https://github.com/ernie-bernie/NeuroBeat/blob/main/Phase%201/papers.md#paper-2) showed that low delta and high alpha together are associated with better mental control in low-anxiety individuals.
 
 ### How EEG Works:
 - Measures electricity in the brain and records it
-- Uses electrodes on two dipoles (different charges in neutrons) to measure the difference of charge between them
+- Uses electrodes on two dipoles (different charges in neurons) to measure the difference of charge between them
 - Single dipoles in neurons are too small to measure, but clusters of differently charged neurons can be used as dipoles
 - Different ways to connect two electrodes
   - A common reference montage, shows the difference of each electrode to the same electrode
   - A bipolar montage, connecting each electrode to the one next to it
   - For anxiety research, frontal electrodes (Fz, F3, F4) in a common reference montage are most commonly used because the prefrontal cortex is heavily involved in emotional regulation
 - EEG is used over brain imaging, since it is capturing data changes millisecond by millisecond, which is why it can track fast-changing mental states like anxiety responses to music in real time.
+- fMRI is more spatially precise but too slow for real-time mental state tracking
+- 
 
 
 
