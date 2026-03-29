@@ -77,6 +77,14 @@
 - NeuroBeat will need to test whether these findings generalize to common genres like ambient, classical, or binaural beats
 - Combined with Papers 1 and 2, this suggests that music can produce the exact alpha shifts that anxiety suppresses, making music a plausible intervention for anxious brain states
 
+### Valence and Arousal:
+- Valence is how positive or negative an emotion feels
+- Arousal is how activating the emotion feels
+- Anxiety is low valence, high arousal
+- "Calmness" is high valence, low arousal
+- The circumplex model has two axis, activation level and pleasant/unpleasant
+- 
+
 
 
 
