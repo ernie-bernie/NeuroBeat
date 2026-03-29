@@ -64,7 +64,11 @@
   - For anxiety research, frontal electrodes (Fz, F3, F4) in a common reference montage are most commonly used because the prefrontal cortex is heavily involved in emotional regulation
 - EEG is used over brain imaging, since it is capturing data changes millisecond by millisecond, which is why it can track fast-changing mental states like anxiety responses to music in real time.
 - fMRI is more spatially precise but too slow for real-time mental state tracking
-- 
+
+### Music on EEG Signals:
+- In a recent [study](https://github.com/ernie-bernie/NeuroBeat/blob/main/Phase%201/papers.md#paper-3), researchers found that listening to different types of music changed brain wave bands
+- They concluded that Egyptian classical music led to a relaxed state of mind, while Egyptian folk music significantly slowed the brain rhythm
+- This leaves the question of if this applies to other types of music, and if it is the same for everyone
 
 
 
