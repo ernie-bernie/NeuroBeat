@@ -11,7 +11,7 @@
 
 ### Frequency Bands
 - Pulses between neurons start creating a rhythm, or a brainwave
-- Measured in cycles, or the number of times the neutrons are firing per second
+- Measured in cycles, or the number of times the neurons are firing per second
 - Lower amplitudes as they speed up
 - 5 main types of these waves
 - Higher freuency the wave, the more awake and alert you are
