@@ -83,7 +83,9 @@
 - Anxiety is low valence, high arousal
 - "Calmness" is high valence, low arousal
 - The circumplex model has two axis, activation level and pleasant/unpleasant
-- 
+- We want to achieve high valence and low arousal
+- DEAP rates valence and arousal on a 1-9 scale per music clip
+- NeuroBeat's classifier predicts where someone sits on that grid using only their EEG signal, no self-reporting required.
 
 
 
