@@ -84,7 +84,7 @@
 - "Calmness" is high valence, low arousal
 - The circumplex model has two axis, activation level and pleasant/unpleasant
 - We want to achieve high valence and low arousal
-- DEAP rates valence and arousal on a 1-9 scale per music clip
+- The DEAP data set from [this](https://github.com/ernie-bernie/NeuroBeat/edit/main/Phase%201/papers.md#paper-5) paper rates valence and arousal on a 1-9 scale per music clip
 - NeuroBeat's classifier predicts where someone sits on that grid using only their EEG signal, no self-reporting required.
 
 
