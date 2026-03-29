@@ -125,3 +125,40 @@ This is the direct bridge between Papers 1 and 2 and NeuroBeat's core premise. P
 - The study used Egyptian folk and classical music specifically. Would results differ with other genres like binaural beats or ambient music?
   
 - Could the relaxed EEG state from classical music be directly measured as enhanced alpha specifically?
+
+-----
+### Paper 4
+
+**Title:** EEG Power Spectrum Changes due to Listening to Pleasant  Music and Their Relation to Relaxation Effects
+
+**Authors:** (check paper for full author names)
+
+**Year:** 1993
+
+**Journal:** Japanese Journal of Hygiene (J-STAGE)
+
+**Link:** https://www.jstage.jst.go.jp/article/jjh1946/48/4/48_4_807/_article/
+
+**Read on:** 3/29/26
+
+**What it's about:**
+Study of 42 healthy young people measuring EEG power spectrum  changes during pleasant music listening — classical and alpha music — and correlating those changes with 16 self-reported psychosomatic feelings including relaxation and calmness.
+
+**Key findings:**
+- Pleasant music produced measurable EEG power spectrum changes
+  
+- Total theta power change was significantly associated with both "pleasant & relaxed" and "calm" feelings
+  
+- Alpha peak frequency in the left occipital region shifted inversely with the "calm" score — as calmness increased, alpha pattern changed measurably
+  
+- Delta power changes across all regions were linked to relaxation
+  
+- Results varied with personality type — Type-A personalities responded differently
+
+**How it connects to NeuroBeat:**
+This is the most directly relevant paper so far. It proves that pleasant music produces measurable EEG changes specifically in alpha and theta — the exact bands NeuroBeat targets. It also introduces an important nuance: personality affects how much the brain responds to music, which means NeuroBeat's system may need to account for individual differences.
+
+**Questions it raised:**
+- If personality type affects EEG response to music, should NeuroBeat's classifier be trained per-user rather than on a general population model?
+
+- Alpha music specifically was tested — worth researching what "alpha music" means and whether it's related to binaural beats
