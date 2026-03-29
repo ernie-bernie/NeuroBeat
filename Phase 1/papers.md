@@ -77,8 +77,7 @@ Suggests that high-anxiety users may struggle to reach enhanced alpha states, me
 Study examining how delta and alpha band power relate to cognitive performance and anxiety levels in people with varying degrees of mindfulness. Found that low delta and high alpha together are associated with better mental control in low-anxiety individuals.
 
 **Key findings:**
-- High alpha power is associated with low anxiety and better cognitive
-  control
+- High alpha power is associated with low anxiety and better cognitive control
 - Low delta power also plays a role alongside alpha — not just alpha alone
 - Mindful, low-anxiety individuals show a distinct EEG signature compared
   to high-anxiety individuals
@@ -90,3 +89,39 @@ Supports alpha as a reliable marker of calm, low-anxiety states. Pairs with Pape
 - Does mindfulness training produce the same alpha signature as calming music?
 - Could NeuroBeat's music system produce short-term effects similar to what mindfulness produces long-term?
 
+-----
+### Paper 3
+ 
+**Title:** The power of music: impact on EEG signals
+ 
+**Authors:** Basma Bahgat El Sayed, Mye Ali Basheer, Marwa Safwat Shalaby, Hala Rashad El Habashy, Saly Hasan Elkholy
+ 
+**Year:** 2025
+
+**Journal:** Psychological Research (Springer)
+ 
+**Link:** https://link.springer.com/article/10.1007/s00426-024-02060-6
+ 
+**Read on:** 3/29/26
+
+**What it's about:**
+ 
+Study measuring QEEG band power changes in 76 participants while listening to two music types. These were Egyptian folk music and classical instrumental music
+
+**Key findings:**
+
+- Classical music was associated with a relaxed state EEG
+  
+- Folk music significantly slowed brain rhythm in the frontal region compared to silence
+  
+- The frontal and occipital regions showed the most significant changes during music listening
+  
+- Different music types activate different cortical areas
+
+**How it connects to NeuroBeat:**
+This is the direct bridge between Papers 1 and 2 and NeuroBeat's core premise. Papers 1 and 2 established that alpha reflects anxiety state. This paper shows music measurably shifts EEG band power, particularly in the frontal region — the same region most relevant to anxiety and emotional regulation. Together these three papers build the scientific case that music can shift the brain states NeuroBeat is trying to target.
+
+**Questions it raised:**
+- The study used Egyptian folk and classical music specifically. Would results differ with other genres like binaural beats or ambient music?
+  
+- Could the relaxed EEG state from classical music be directly measured as enhanced alpha specifically?
