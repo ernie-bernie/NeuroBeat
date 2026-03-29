@@ -1,6 +1,6 @@
 # *NeuroBeat 🧠🎵*
 
-Investigating the effects of music on neurological brain states, with applications to Parkinson's disease and epilepsy.
+Investigating the effects of music on neurological brain states, with applications anxiety.
 
 ## Contributors  
 - Started 2026
