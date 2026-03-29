@@ -162,3 +162,37 @@ This is the most directly relevant paper so far. It proves that pleasant music p
 - If personality type affects EEG response to music, should NeuroBeat's classifier be trained per-user rather than on a general population model?
 
 - Alpha music specifically was tested — worth researching what "alpha music" means and whether it's related to binaural beats
+
+
+----
+### Paper 5
+
+**Title:** DEAP: A Database for Emotion Analysis Using  Physiological Signals
+
+**Authors:** Koelstra, S., Mühl, C., Soleymani, M., Lee, J.S., Yazdani, A., Ebrahimi, T., Pun, T., Nijholt, A., Patras, I.
+
+**Year:** 2012
+
+**Journal:** IEEE Transactions on Affective Computing
+
+**Link:** https://doi.org/10.1109/T-AFFC.2011.15
+
+**Read on:** 3/29/26
+
+**What it's about:**
+Introduces the DEAP dataset, EEG and physiological signals from 32 participants watching 40 one-minute music video clips, each rated on arousal, valence, like/dislike, dominance, and familiarity. Includes classification results for emotion  recognition from EEG alone.
+
+**Key findings:**
+- EEG signal frequencies correlate with participant arousal and valence ratings
+  
+- Single-trial classification of arousal and valence from EEG alone is possible using machine learning
+
+- Multiple physiological signals recorded, EEG is one of several modalities tested
+
+**How it connects to NeuroBeat:**
+This is the dataset NeuroBeat will use in Phase 2. The paper proves that EEG frequencies correlate with valence and arousal ratings, meaning the data NeuroBeat's classifier will train on is scientifically validated. The fact that it has 4,363 citations means it is one of the most trusted datasets in the field, which strengthens NeuroBeat's methodology.
+
+**Questions it raised:**
+- The dataset uses music videos, not music alone. Does the visual component affect EEG differently than audio only?
+- DEAP has 32 participants, is that enough data to train a reliable classifier, or will we need to supplement it?
+- What did their own classification accuracy look like? Can NeuroBeat beat or match it?
