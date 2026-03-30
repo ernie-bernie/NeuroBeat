@@ -89,12 +89,24 @@
 
 ### Binaural Beats:
 - Binaural beats are formed when two notes of different frequencies are played in different ears
-- For example, if one note is 400 Hz and one is 410 Hz, the person would hear a frequency of 10 Hz
+- For example, if one note is 400 Hz and one is 410 Hz, the person would percieve a frequency of 10 Hz
 - This is believed to associate directly with the different wave bands
 - A [paper](https://github.com/ernie-bernie/NeuroBeat/blob/main/Phase%201/papers.md#paper-6) stated that binaural beats provided more therapy than no music or noise cancelling headphones
 - However, there are differing opinions on the effectiveness of these beats, since some tests did not show a change in the EEG readings
 - Could this be because of the differing personality types just like the response to alpha music?
 
+### Paper 7:
+- This [paper](https://github.com/ernie-bernie/NeuroBeat/blob/main/Phase%201/papers.md#paper-7) validated a few key parts of NeuroBeat:
+  - Alpha/beta ratio is negatively correlated with stress, meaning as stress increases, the ratio goes down
+  
+  - Theta/beta ratio is also negatively correlated with stress
+  
+  - Both ratios can reliably discriminate stressed vs. resting states from EEG alone
+  
+  - Used Welch's FFT (scipy.signal.welch()) for feature extraction, which is the exact method NeuroBeat will use
+  
+  - Slow wave vs. fast wave (SW/FW) analysis successfully separated stress from baseline
+- This is a major paper, since it proves that the technical ideas of NeuroBeat will work
 
 
 
