@@ -196,3 +196,38 @@ This is the dataset NeuroBeat will use in Phase 2. The paper proves that EEG fre
 - The dataset uses music videos, not music alone. Does the visual component affect EEG differently than audio only?
 - DEAP has 32 participants, is that enough data to train a reliable classifier, or will we need to supplement it?
 - What did their own classification accuracy look like? Can NeuroBeat beat or match it?
+
+------
+### Paper 6
+
+**Title:** The Efficiency of Binaural Beats on Anxiety  and Depression — A Systematic Review
+
+**Authors:**  Ionut Cristian Cozmin Baseanu, Nadinne Alexandra Roman, Diana Minzatanu, Adina Manaila, Vlad Ionut Tuchel, Elena Bianca Basalic, and Roxana Steliana Miclaus
+**Year:** 2024
+**Journal:** Applied Sciences (MDPI)
+**Link:** https://www.mdpi.com/2076-3417/14/13/5675
+**Read on:** 3/29/26
+
+**What it's about:**
+A systematic review of 12 studies examining whether binaural beats are effective at reducing anxiety and depression symptoms. Searched across 6 major medical databases to find eligible studies.
+
+**Key findings:**
+- Binaural beats showed better results in reducing anxiety and depression compared to control conditions like no music or noise-canceling headphones alone
+  
+- Works whether used as pure beats or masked by another sound
+  
+- Described as a promising and easy-to-use method for anxiety and depression symptom relief
+  
+- Also noted as relevant in neurological conditions, directly connecting to NeuroBeat's Parkinson's and epilepsy direction
+
+**How it connects to NeuroBeat:**
+Directly validates binaural beats as a music type worth including in NeuroBeat's system. Combined with Papers 3 and 4 which showed music shifts EEG band power, this paper shows that binaural beats specifically reduce anxiety symptoms, making them a strong candidate for NeuroBeat's adaptive music selection. The mention of neurological conditions also bridges toward the Parkinson's and epilepsy long-term goal.
+
+**Questions it raised:**
+- The review shows symptom relief but does it measure EEG changes specifically? Do binaural beats actually shift alpha/beta ratio or just make people feel better?
+  
+- What frequency of binaural beat works best for anxiety, alpha range (8-13 Hz) or theta range (4-8 Hz)?
+  
+- If masked by another sound, does the music type matter or just the beat frequency underneath?
+
+
