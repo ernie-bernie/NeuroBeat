@@ -31,7 +31,7 @@ That's NeuroBeat.
 #### _Foundations and literature review_
 
 
- - Read and document 15–20 peer-reviewed papers on music therapy, EEG neuroscience, Parkinson's, and epilepsy
+ - Read and document 6–10 peer-reviewed papers on music therapy, EEG neuroscience, Parkinson's, and epilepsy
    
  - Learn Python fundamentals: NumPy, Matplotlib, Pandas
    
