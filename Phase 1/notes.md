@@ -87,6 +87,14 @@
 - The DEAP data set from [this](https://github.com/ernie-bernie/NeuroBeat/blob/main/Phase%201/papers.md#paper-5) paper rates valence and arousal on a 1-9 scale per music clip
 - NeuroBeat's classifier predicts where someone sits on that grid using only their EEG signal, no self-reporting required.
 
+### Binaural Beats:
+- Binaural beats are formed when two notes of different frequencies are played in different ears
+- For example, if one note is 400 Hz and one is 410 Hz, the person would hear a frequency of 10 Hz
+- This is believed to associate directly with the different wave bands
+- A [paper](https://github.com/ernie-bernie/NeuroBeat/blob/main/Phase%201/papers.md#paper-6) stated that binaural beats provided more therapy than no music or noise cancelling headphones
+- However, there are differing opinions on the effectiveness of these beats, since some tests did not show a change in the EEG readings
+- Could this be because of the differing personality types just like the response to alpha music?
+
 
 
 
