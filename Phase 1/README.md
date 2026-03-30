@@ -20,7 +20,7 @@ The goal of Phase 1 is to build enough understanding of neuroscience, EEG, and m
 
 ## Papers we plan to read
 
-We're aiming for 15–20 peer-reviewed papers across these areas:
+We're aiming for 6–10 peer-reviewed papers across these areas:
 
 - EEG methodology and frequency band interpretation
 - Music and emotion — how different music types affect arousal and valence
@@ -40,7 +40,7 @@ We're aiming for 15–20 peer-reviewed papers across these areas:
 
 ## Phase 1 checklist
 
- - Read and log 15–20 papers
+ - Read and log 6–10 papers
  - Understand and explain the Fourier transform in our own words
  - Understand what alpha and beta bands look like in anxiety vs. calm states
  - Know what the DEAP dataset contains and how it's structured
