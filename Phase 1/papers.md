@@ -203,9 +203,13 @@ This is the dataset NeuroBeat will use in Phase 2. The paper proves that EEG fre
 **Title:** The Efficiency of Binaural Beats on Anxiety  and Depression — A Systematic Review
 
 **Authors:**  Ionut Cristian Cozmin Baseanu, Nadinne Alexandra Roman, Diana Minzatanu, Adina Manaila, Vlad Ionut Tuchel, Elena Bianca Basalic, and Roxana Steliana Miclaus
+
 **Year:** 2024
+
 **Journal:** Applied Sciences (MDPI)
+
 **Link:** https://www.mdpi.com/2076-3417/14/13/5675
+
 **Read on:** 3/29/26
 
 **What it's about:**
@@ -230,4 +234,49 @@ Directly validates binaural beats as a music type worth including in NeuroBeat's
   
 - If masked by another sound, does the music type matter or just the beat frequency underneath?
 
+-------
+### Paper 7
 
+**Title:** Electroencephalogram (EEG) Stress Analysis using  Alpha/Beta Ratio and Theta/Beta Ratio
+
+**Authors:** Tee Yi Wen, Siti Armiza Mohd Aris
+
+**Year:** 2020
+
+**Link:** https://d1wqtxts1xzle7.cloudfront.net/86181083/13221-libre.pdf?1653012350=&response-content-disposition=inline%3B+filename%3DElectroencephalogram_EEG_stress_analysis.pdf&Expires=1774834832&Signature=Wua-aPvKepLwM54sKWpbdAQtsAaWYpyxHJXBqne81tuMwFg2u3dFislVQ-c2sag3TYupUXK2npzujamUYkLwwlyY18s1L5XudBQSRkTNmEeFw5wXunlaIxJp6maqv3qPXsZ1OKCH-bOk6JSVnSZnxuXlWxLdUo1aq3JzSCvUIbKboHEYd0hCClqAGoQ6v4z6j-lpB8fuzQww2ihelHjuQOWSdcRZXyyN1vJf1SjdK7yV1QCZWN2O3kNoWmJ7v0Mpk5n8~p18F2L5NA2cEvFR~9Pjci4l0N18uVsN4W3910gdp53ow7OywE1hxz6H5azFOy~1wvOgJN-YpDpR6-~2RA__&Key-Pair-Id=APKAJLOHF5GGSLRBV4ZA
+
+**Read on:** 3/29/26
+
+**What it's about:**
+Study of 40 subjects measuring EEG stress features using alpha/beta and theta/beta power ratios, with stress induced by virtual reality technology. Used Welch's FFT to extract power spectral density features.
+
+**Key findings:**
+- Alpha/beta ratio is negatively correlated with stress, meaning as stress increases, the ratio goes down
+  
+- Theta/beta ratio is also negatively correlated with stress
+  
+- Both ratios can reliably discriminate stressed vs. resting states from EEG alone
+  
+- Used Welch's FFT (scipy.signal.welch()) for feature extraction, which is the exact method NeuroBeat will use
+  
+- Slow wave vs. fast wave (SW/FW) analysis successfully separated stress from baseline
+
+**How it connects to NeuroBeat:**
+This is the most directly relevant paper to NeuroBeat's technical implementation. It validates two things at once: (1) the alpha/beta ratio is a reliable, measurable marker of stress and anxiety, and (2) Welch's FFT is the correct method to calculate it. NeuroBeat's classifier will use exactly this approach — extract alpha/beta ratio using Welch's FFT, then classify brain state. This paper is essentially a proof of concept for NeuroBeat's core method.
+
+**Questions it raised:**
+- Stress was induced by VR — would music-induced calm produce the opposite shift in the same ratio?
+  
+- 40 subjects is a decent sample — how consistent were individual results, or did the ratio vary a lot between people?
+  
+- Which electrode locations showed the strongest alpha/beta ratio changes?
+
+------
+## Phase 1 Papers Conclusion Per Paper:
+- Anxiety affects ability to control alpha (Paper 1)
+- High alpha = low anxiety, better cognitive control (Paper 2)
+- Music measurably changes EEG band power (Paper 3)
+- Pleasant music shifts alpha and theta toward relaxation (Paper 4)
+- DEAP dataset validates EEG emotion classification from music (Paper 5)
+- Binaural beats reduce anxiety symptoms (Paper 6)
+- Alpha/beta ratio is a reliable, measurable stress marker using Welch's FFT (Paper 7)
