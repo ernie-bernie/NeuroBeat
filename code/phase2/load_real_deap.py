@@ -157,5 +157,6 @@ print(f"\nCompleted {len(ratios)} participants")
 print(f"Average alpha/beta ratio: {np.mean(list(ratios.values())):.3f}")
 
 
-
+#Shows the plots
 plt.show()
+
