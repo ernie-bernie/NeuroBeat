@@ -5,7 +5,10 @@
 
 import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.neighbors import KNeighborsClassifier
+# This is taken out to test SVC
+# from sklearn.neighbors import KNeighborsClassifier
+
+from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 
 # -------------------------------
@@ -50,7 +53,7 @@ X_test = X_test.reshape(-1, 1)
 # -------------------------------
 # Train the classifier
 # -------------------------------
-model = KNeighborsClassifier(n_neighbors=5)
+model = SVC(kernel='rbf')
 model.fit(X_train, y_train)
 
 # -------------------------------
@@ -64,3 +67,4 @@ print(f"Anxious samples: {np.sum(labels == 1)}")
 print(f"Majority class baseline: {max(np.mean(labels == 0), np.mean(labels == 1)):.2%}")
 from sklearn.metrics import classification_report
 print(classification_report(y_test, predictions, target_names=['calm', 'anxious']))
+
