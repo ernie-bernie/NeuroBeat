@@ -26,7 +26,7 @@ That gap led to a single question — what if instead of measuring the environme
 That's NeuroBeat.
 
 ## Roadmap
-### Phase 1 (in progress)
+### Phase 1
 
 #### _Foundations and literature review_
 
@@ -45,7 +45,7 @@ That's NeuroBeat.
 
 - Literature notes, early visualizations, and a written summary — all documented in this repo.
 
-### Phase 2
+### Phase 2 (in progress)
 
 Public EEG data and machine learning
 
