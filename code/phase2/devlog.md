@@ -39,8 +39,18 @@ Updated as we go
 
 ### What confused us
 - Why is there so much gamma showing up?
+- How accurate will it be when I incorporate the real valence and arousal ratings?
 
 ### What comes next
 - Loop through all 32 participants and compute alpha/beta ratio for each
 - Extract features across all trials, not just continuous recording
 - Build the classifier
+
+-------
+
+## Entry 2 — 4/2/26
+
+### What we built
+- Switched to SVM to make a prediction
+- Instead of finding the nearest neighbors, it finds the best curve to fit it
+- Calm and anxious states don't always split into two neat halves, so a curved decision boundary fits better
