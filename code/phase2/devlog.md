@@ -20,10 +20,10 @@ Updated as we go
 - Computed first real alpha/beta ratio: 4.07 for participant 1, Fz channel
 - Computed first real alpha/beta ratio for all of the participants
 - Built first classifier using scikit-learn KNeighborsClassifier
-- Classifier accuracy: 71.09% — but majority class baseline was 74.53%,
+- Classifier accuracy: 71.09%, but majority class baseline was 74.53%,
   meaning it performed worse than just guessing the most common class
 - Class imbalance: 326 calm vs 954 anxious with fixed threshold rule
-- Calm recall only 5% — classifier was predicting anxious for everything
+- Calm recall only 5%. Classifier was predicting anxious for everything
 - Learned: accuracy is misleading when classes are imbalanced — F1 is better
 - Next: fix imbalance with median split, get real DEAP labels, try SVM
 
@@ -48,9 +48,19 @@ Updated as we go
 
 -------
 
-## Entry 2 — 4/2/26
+## Entry 2 — 4/3/26
 
 ### What we built
 - Switched to SVM to make a prediction
 - Instead of finding the nearest neighbors, it finds the best curve to fit it
 - Calm and anxious states don't always split into two neat halves, so a curved decision boundary fits better
+- Because I cannot access the valence and arousal scores to download, I am going to design the UI
+- This will show real-time EEG band power
+- In this, I will include:
+  - Both of the graphs, the filtered eeg and the one of the frequencies.
+  - A map of what parts of the brain or electrodes have the most activation
+  - The predicted emotion
+  - And what type of music is playing and/or tested (if we implement that)
+- After incorportating the two graphs into the UI, I noticed that there was always a huge delta spike
+- I decided that cutting off the delta wavelength from the frequency graph would better depict the data
+- The two graphs ended up working, but the brain map is having issues, will work on it next session
