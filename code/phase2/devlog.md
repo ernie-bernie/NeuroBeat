@@ -64,3 +64,38 @@ Updated as we go
 - After incorportating the two graphs into the UI, I noticed that there was always a huge delta spike
 - I decided that cutting off the delta wavelength from the frequency graph would better depict the data
 - The two graphs ended up working, but the brain map is having issues, will work on it next session
+
+-------
+
+## Entry 2 — 4/12/26
+
+### What we built
+- Built the full NeuroBeat dashboard in Streamlit
+- Raw EEG signal panel: 10 seconds of real brain data with time axis
+- Power spectrum panel: frequency bands labeled, x-axis zoomed to 4-40 Hz
+  to show meaningful brain activity range
+- Topographic brain map: shows alpha, beta, or theta power across all 
+  electrodes on a head outline, switchable from sidebar
+- Brain state panel: alpha/beta ratio, calm/neutral/anxious prediction 
+  with color coding
+- Fixed brain map cosmetics, removed dots, contour lines, and jagged 
+  extrapolation edges for a clean professional look
+
+### What we learned
+- Streamlit layout system, columns, sidebar, metrics, success/warning/error
+- MNE topographic plotting, montage setup, channel position mapping,
+  extrapolation modes
+- DEAP uses non-standard electrode names that don't perfectly match any 
+  standard montage, it requires explicit channel selection
+- centered vs wide layout in Streamlit affects readability significantly
+- sensors=False and contours=0 make topomaps look much cleaner
+
+### What confused us
+- Why some DEAP electrodes don't map to standard montage positions
+- Why extrapolate='head' produced jagged polygon shape instead of circle
+
+### What comes next
+- Get real DEAP labels when server comes back up (checking daily)
+- Plug real labels into classifier and get first real accuracy result
+- Add music panel to dashboard
+- Commit and push everything cleanly
