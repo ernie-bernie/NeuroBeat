@@ -16,7 +16,7 @@ mne.set_log_level('ERROR')
 st.set_page_config(
     page_title="NeuroBeat",
     page_icon="🧠",
-    layout="wide"
+    layout="centered"
 )
 
 st.title("🧠 NeuroBeat")
@@ -26,15 +26,34 @@ st.caption("EEG Brain State Monitor — Music & Anxiety Research")
 # Sidebar — controls
 # -------------------------------
 st.sidebar.header("Controls")
+
+#Pick the participant
 participant = st.sidebar.selectbox(
     "Participant", 
     options=list(range(1, 33)),
     format_func=lambda x: f"Participant {x:02d}"
 )
+
+#Pick the channel
 channel_name = st.sidebar.selectbox(
     "Channel",
     options=["Fz", "F3", "F4", "Cz", "Pz"]
 )
+
+
+
+#Pick the band
+band_name = st.sidebar.selectbox(
+    "Brain map band",
+    options=["Alpha", "Beta", "Theta"]
+)
+
+band_ranges = {
+    "Alpha": (8, 13),
+    "Beta": (13, 30),
+    "Theta": (4, 8)
+}
+band_low, band_high = band_ranges[band_name]
 
 # -------------------------------
 # Load and filter data
@@ -99,44 +118,83 @@ with col2:
 # Row 2 — Brain map
 # -------------------------------
 st.subheader("Brain Activity Map")
-st.caption("Alpha power across all electrodes")
+st.caption(f"{band_name} power across all electrodes")
 
-# @st.cache_data(show_spinner=False)
-def compute_alpha_map(participant):
+def compute_band_map(participant, low, high):
     raw = load_participant(participant)
-    raw.pick_types(eeg=True)
+    known_channels = ['Fp1', 'Fp2', 'F7', 'F3', 'Fz', 'F4', 'F8',
+                      'T7', 'C3', 'Cz', 'C4', 'T8',
+                      'P7', 'P3', 'Pz', 'P4', 'P8',
+                      'O1', 'Oz', 'O2', 'FC1', 'FC2',
+                      'CP1', 'CP2', 'FC5', 'FC6', 'CP5', 'CP6',
+                      'AF3', 'AF4', 'PO3', 'PO4']
+    available = [ch for ch in known_channels if ch in raw.ch_names]
+    raw.pick_channels(available)
     raw.set_montage('standard_1020', on_missing='ignore')
     data = raw.get_data()
     sfreq = raw.info['sfreq']
     sixty_sec = int(60 * sfreq)
-    
-    alpha_powers = []
+    band_powers = []
     for ch in range(len(raw.ch_names)):
         freqs, psd = welch(data[ch, :sixty_sec], fs=sfreq, nperseg=512)
-        band = (freqs >= 8) & (freqs <= 13)
-        alpha_powers.append(psd[band].mean())
-    
-    return alpha_powers, raw
+        band = (freqs >= low) & (freqs <= high)
+        band_powers.append(psd[band].mean())
+    return np.array(band_powers), raw
 
+band_powers, raw_topo = compute_band_map(participant, band_low, band_high)
 
-alpha_powers, raw = compute_alpha_map(participant)
+col3, col4, col5 = st.columns([1, 2, 1])
 
-fig3, ax3 = plt.subplots(figsize=(6, 5))
-mne.viz.plot_topomap(
-    alpha_powers,
-    raw.info,
-    axes=ax3,
-    show=False,
-    cmap='RdYlGn',
-    vlim=(np.min(alpha_powers), np.max(alpha_powers))
+with col4:
+    fig3, ax3 = plt.subplots(figsize=(4, 4))
+    im, _ = mne.viz.plot_topomap(
+        band_powers,
+        raw_topo.info,
+        axes=ax3,
+        show=False,
+        cmap='RdYlGn',
+        vlim=(np.min(band_powers), np.max(band_powers)),
+        extrapolate='head',
+        sphere='eeglab',
+        contours=0,        # removes the contour lines — cleaner look
+        sensors=False,     # removes the dots entirely
+        outlines='head'    # keeps just the head outline
 )
-ax3.set_title("Alpha power distribution")
-st.pyplot(fig3)
-plt.close()
-
-
+    plt.colorbar(im, ax=ax3, shrink=0.7, 
+                 label=f'{band_name} power (µV²/Hz)')
+    ax3.set_title(f"{band_name} power — "
+                  f"{'higher = calmer' if band_name == 'Alpha' else 'higher = more active'}")
+    plt.tight_layout()
+    st.pyplot(fig3)
+    plt.close()
 
 # -------------------------------
-# To run: python -m streamlit run code/phase2/dashboard.py
+# Row 3 — Emotion prediction
+# -------------------------------
+st.subheader("Brain State")
+
+# Compute alpha/beta ratio for selected channel
+alpha_idx = (freqs >= 8) & (freqs <= 13)
+beta_idx = (freqs >= 13) & (freqs <= 30)
+ratio = power[alpha_idx].mean() / power[beta_idx].mean()
+
+col6, col7, col8 = st.columns(3)
+
+with col6:
+    st.metric("Alpha/Beta Ratio", f"{ratio:.2f}")
+
+with col7:
+    if ratio > 2.0:
+        st.success("😌 Calm")
+    elif ratio > 1.0:
+        st.warning("😐 Neutral")
+    else:
+        st.error("😰 Anxious")
+
+with col8:
+    st.metric("Alpha Power", f"{power[alpha_idx].mean():.2e}")
+
+# -------------------------------
+# To run: python -m streamlit run NeuroBeat/code/phase2/dashboard.py
 # To close: Ctrl+C in terminal
 # -------------------------------
