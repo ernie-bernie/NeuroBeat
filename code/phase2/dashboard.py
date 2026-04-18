@@ -16,7 +16,7 @@ mne.set_log_level('ERROR')
 st.set_page_config(
     page_title="NeuroBeat",
     page_icon="🧠",
-    layout="centered"
+    layout="wide"
 )
 
 st.title("🧠 NeuroBeat")
@@ -156,7 +156,7 @@ with col4:
         vlim=(np.min(band_powers), np.max(band_powers)),
         extrapolate='head',
         sphere='eeglab',
-        contours=0,        # removes the contour lines — cleaner look
+        contours=0,        # removes the contour lines for a cleaner look
         sensors=False,     # removes the dots entirely
         outlines='head'    # keeps just the head outline
 )
@@ -194,7 +194,62 @@ with col7:
 with col8:
     st.metric("Alpha Power", f"{power[alpha_idx].mean():.2e}")
 
+
 # -------------------------------
-# To run: python -m streamlit run NeuroBeat/code/phase2/dashboard.py
+# Row 4 — Music recommendation
+# -------------------------------
+st.subheader("Music Recommendation")
+
+# Define music logic based on brain state
+music_folder = r"C:\Users\evyne\Documents\NeuroBeat\NeuroBeat\code\phase2\music"
+
+if ratio < 1.0:
+    music_file = f"{music_folder}\\Binaural_beats.mp3"
+    music_type = "Binaural Beats"
+    reasoning = (
+        "Your alpha/beta ratio is below 1.0, indicating an anxious brain state. "
+        "Binaural beats in the alpha frequency range (8-13 Hz) have been shown to "
+        "reduce anxiety symptoms better than silence or noise-canceling headphones alone "
+        "(Paper 6 — systematic review of 12 studies). The goal is to entrain your brain "
+        "toward enhanced alpha activity."
+    )
+elif ratio < 2.0:
+    music_file = f"{music_folder}\\Classical_clip.mp3"
+    music_type = "Classical Music"
+    reasoning = (
+        "Your alpha/beta ratio is between 1.0 and 2.0, indicating a neutral brain state. "
+        "Classical music has been associated with a relaxed EEG state and measurable "
+        "increases in alpha band power compared to silence (Paper 3). "
+        "The goal is to shift toward enhanced alpha dominance."
+    )
+else:
+    music_file = f"{music_folder}\\Ambient_clip.mp3"
+    music_type = "Ambient Music"
+    reasoning = (
+        "Your alpha/beta ratio is above 2.0, indicating a calm brain state with "
+        "enhanced alpha activity. Ambient music maintains this relaxed state without "
+        "overstimulation. Research shows pleasant music sustains alpha and theta "
+        "power in already-relaxed participants (Paper 4)."
+    )
+
+# Display recommendation
+col9, col10 = st.columns([1, 2])
+
+with col9:
+    st.info(f"🎵 Now playing: **{music_type}**")
+    with open(music_file, 'rb') as f:
+        audio_bytes = f.read()
+    st.audio(audio_bytes, format='audio/mp3')
+
+with col10:
+    st.markdown("**Why this music?**")
+    st.write(reasoning)
+    st.caption(f"Alpha/Beta ratio: {ratio:.2f} — "
+               f"{'Anxious' if ratio < 1.0 else 'Neutral' if ratio < 2.0 else 'Calm'} state detected")
+    
+
+    
+# -------------------------------
+# To run: python -m streamlit run code/phase2/dashboard.py
 # To close: Ctrl+C in terminal
 # -------------------------------
