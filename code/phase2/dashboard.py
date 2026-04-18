@@ -11,7 +11,7 @@ from scipy.signal import welch
 import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 music_folder = os.path.join(BASE_DIR, "music")
-st.write(f"Looking for music in: {music_folder}")
+
 # Stops useless outputs
 mne.set_log_level('ERROR')
 # -------------------------------
