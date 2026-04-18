@@ -8,6 +8,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import mne
 from scipy.signal import welch
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+music_folder = os.path.join(BASE_DIR, "music")
+st.write(f"Looking for music in: {music_folder}")
 # Stops useless outputs
 mne.set_log_level('ERROR')
 # -------------------------------
@@ -201,10 +205,9 @@ with col8:
 st.subheader("Music Recommendation")
 
 # Define music logic based on brain state
-music_folder = r"C:\Users\evyne\Documents\NeuroBeat\NeuroBeat\code\phase2\music"
 
 if ratio < 1.0:
-    music_file = f"{music_folder}\\Binaural_beats.mp3"
+    music_file = os.path.join(music_folder, "Binaural_beats.mp3")
     music_type = "Binaural Beats"
     reasoning = (
         "Your alpha/beta ratio is below 1.0, indicating an anxious brain state. "
@@ -214,7 +217,7 @@ if ratio < 1.0:
         "toward enhanced alpha activity."
     )
 elif ratio < 2.0:
-    music_file = f"{music_folder}\\Classical_clip.mp3"
+    music_file = os.path.join(music_folder, "Classical_clip.mp3")
     music_type = "Classical Music"
     reasoning = (
         "Your alpha/beta ratio is between 1.0 and 2.0, indicating a neutral brain state. "
@@ -222,14 +225,23 @@ elif ratio < 2.0:
         "increases in alpha band power compared to silence (Paper 3). "
         "The goal is to shift toward enhanced alpha dominance."
     )
-else:
-    music_file = f"{music_folder}\\Ambient_clip.mp3"
+elif ratio < 4.0:
+    music_file = os.path.join(music_folder, "Ambient_clip.mp3")
     music_type = "Ambient Music"
     reasoning = (
-        "Your alpha/beta ratio is above 2.0, indicating a calm brain state with "
-        "enhanced alpha activity. Ambient music maintains this relaxed state without "
-        "overstimulation. Research shows pleasant music sustains alpha and theta "
-        "power in already-relaxed participants (Paper 4)."
+        "Your alpha/beta ratio is between 2.0 and 4.0, indicating a calm brain state. "
+        "Ambient music maintains this relaxed state without overstimulation. "
+        "Research shows pleasant music sustains alpha and theta power in "
+        "already-relaxed participants (Paper 4)."
+    )
+else:
+    music_file = os.path.join(music_folder, "Upbeat_clip.mp3")
+    music_type = "Upbeat Music"
+    reasoning = (
+        "Your alpha/beta ratio is above 4.0, indicating a very calm, possibly "
+        "under-stimulated brain state. Upbeat music provides gentle stimulation "
+        "to maintain engagement without triggering anxiety. The goal is to keep "
+        "you in an optimal alert but relaxed state."
     )
 
 # Display recommendation
