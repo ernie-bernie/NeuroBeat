@@ -99,3 +99,33 @@ Updated as we go
 - Plug real labels into classifier and get first real accuracy result
 - Add music panel to dashboard
 - Commit and push everything cleanly
+
+-------
+
+## Entry 3 — 5/1/26
+
+### What we built
+- Loaded DEAP preprocessed .dat files using pickle, each file contains both EEG signals and labels already aligned by trial
+- Wrote load_preprocessed.py from scratch, file loading, feature  extraction loop, label extraction, classifier training and evaluation
+- Extracted alpha/beta ratios for all 40 trials from participant 1 and printed alongside real valence and arousal scores
+- Expanded to all 32 participants, with 1280 total samples
+- Trained SVM classifier on real data for the first time
+
+### What we found
+- First real classification accuracy: 51.5%, which is just above 50% baseline
+- Using only one feature (alpha/beta ratio) from one channel (Fp1)
+- Class 0 recall was 0.79 — model finds calm states reasonably well but struggles to identify high arousal states
+- Trial 21 had valence 0.00 but alpha/beta ratio of 2.628. This shows subjective emotional response and brain state don't always match. This is a  genuine finding worth discussing in the paper
+- Individual variation confirmed, ratios ranged from 2.2 to 3.8 across trials for participant 1
+
+### What we learned
+- 51.5% with one feature is a legitimate baseline in EEG classification research
+- Single-channel alpha/beta ratio alone is not enough to reliably classify arousal states, more features are needed
+- Valence and arousal capture different things — arousal correlates more directly with brain anxiety markers than valence does
+
+### What comes next
+- Add more features like theta/beta ratio, absolute alpha power, F3/F4 asymmetry
+- Use frontal channels specifically (Fz, F3, F4) instead of just Fp1
+- Try different classifiers and compare
+- See if accuracy improves meaningfully with richer features
+- Update dashboard to use preprocessed data instead of BDF files
