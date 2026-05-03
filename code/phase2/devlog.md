@@ -129,3 +129,32 @@ Updated as we go
 - Try different classifiers and compare
 - See if accuracy improves meaningfully with richer features
 - Update dashboard to use preprocessed data instead of BDF files
+
+------
+## Entry 4 — 5/2/26
+
+### What we built
+- Developed a cross-participant classification pipeline that uses the preprocessed DEAP dataset with actual data of 5 features per trial
+- Five features used include: alpha/beta ratio for F3 (feature index 2), Fz (feature index 18), and F4 (feature index 19); theta/beta ratio for Fz and alpha asymmetry for F3 & F4
+- Developed per-subject classification pipeline that iterates on all 32 subjects individually
+- Compared performance of SVM classifier and Random Forest; valence and arousal as target labels
+
+### What we found
+- Accuracy across participants with Random Forest and 5 features as input and valence as target label: 56.25%
+- Valence performed better as target than arousal (56% compared to 51%); frontal alpha performs better as predictor for valence than arousal
+- SVM performed much worse after feature normalization; predicted only one class on everything
+- Per-subject accuracy range averaged 55% but ranged from 20% to 90%
+- Best participant: 17 at 90% accuracy
+- Worst participant: 11 at 20% accuracy
+
+### What we learned
+- Cross-participant EEG classification is genuinely hard and produce mediocre results when one model is applied to everyone
+- The 20% to 90% per-subject range proves individual variation is the
+  core challenge in EEG emotion recognition
+- Frontal alpha predicts valence better than arousal
+- Per-user calibration is scientifically necessary, not just a nice feature
+
+### What comes next
+- Phase 3 hardware integration and live EEG
+- Calibration session: user listens to music clips, rates feelings, system builds a personal model
+- Per-subject pipeline already written, Phase 3 just runs it live on a new user instead of stored DEAP data
