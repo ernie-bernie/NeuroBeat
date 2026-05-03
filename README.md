@@ -5,8 +5,6 @@ Investigating the effects of music on neurological brain states, with applicatio
 ## Contributors  
 - Started 2026
 - Evyn Ernest: Grade 8
-- Gryson Bae: Grade 10
-- Both researchers are co-authors on all publications and competition submissions.
 
 ## What is this?
 NeuroBeat is a long-term independent research project at the intersection of neuroscience, signal processing, and machine learning.

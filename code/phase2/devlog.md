@@ -67,7 +67,7 @@ Updated as we go
 
 -------
 
-## Entry 2 — 4/12/26
+## Entry 3 — 4/12/26
 
 ### What we built
 - Built the full NeuroBeat dashboard in Streamlit
@@ -102,7 +102,7 @@ Updated as we go
 
 -------
 
-## Entry 3 — 5/1/26
+## Entry 4 — 5/1/26
 
 ### What we built
 - Loaded DEAP preprocessed .dat files using pickle, each file contains both EEG signals and labels already aligned by trial
@@ -131,7 +131,7 @@ Updated as we go
 - Update dashboard to use preprocessed data instead of BDF files
 
 ------
-## Entry 4 — 5/2/26
+## Entry 5 — 5/2/26
 
 ### What we built
 - Developed a cross-participant classification pipeline that uses the preprocessed DEAP dataset with actual data of 5 features per trial
