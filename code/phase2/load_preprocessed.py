@@ -5,6 +5,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, classification_report
 import os
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestClassifier
 
 def get_alpha_beta_ratio(frequencies, power):
     alpha_indices = np.where((frequencies >= 8) & (frequencies <= 13))[0]
@@ -13,108 +15,125 @@ def get_alpha_beta_ratio(frequencies, power):
     beta_power = np.mean(power[beta_indices])
     return alpha_power / beta_power
 
-def main():
-    file_path = r"C:\Users\evyne\Documents\NeuroBeat\NeuroBeat\code\phase2\data\s01.dat"
-    with open(file_path, "rb") as f:
-        data = pickle.load(f, encoding="latin1")
-
-    eeg_data = data["data"]  
-    labels = data["labels"]  
-    sfreq = 128              
-
-    print("EEG data shape:", eeg_data.shape)
-    print("\nTrial | Valence | Arousal | Alpha/Beta Ratio")
-    print("-" * 50)
-
-    for i in range(40):
-        # Get channel 0 (Fp1) for this trial
-        channel = eeg_data[i, 0, :]
-        freqs, power = welch(channel, fs=sfreq, nperseg=256)
-        ratio = get_alpha_beta_ratio(freqs, power)
-        valence = labels[i][0]
-        arousal = labels[i][1]
-        print(f"  {i+1:2d}  | {valence:.2f}    | {arousal:.2f}    | {ratio:.3f}")
-    # --- Feature extraction: alpha/beta ratio ---
+def extract_features(eeg_data, sfreq):
+    # Returns a list of 5-feature vectors, one per trial
     features = []
-    for i in range(40):
-        channel = eeg_data[i, 0, :]
-        freqs, power = welch(channel, fs=sfreq, nperseg=256)
-        ratio = get_alpha_beta_ratio(freqs, power)
-        features.append(ratio)
+    for i in range(eeg_data.shape[0]):
+        trial_features = []
 
-    X = np.array(features)
-    X = X.reshape(-1, 1)
-    # --- Labels: arousal (index 1) ---
-    y = labels[:, 1]
+        # Alpha/beta ratio for F3 (2), Fz (18), F4 (19)
+        for p in [2, 18, 19]:
+            channel = eeg_data[i, p, :]
+            freqs, power = welch(channel, fs=sfreq, nperseg=256)
+            ratio = get_alpha_beta_ratio(freqs, power)
+            trial_features.append(ratio)
 
-    # --- Convert to binary using median split ---
-    median_val = np.median(y)
-    y_binary = np.where(y >= median_val, 1, 0)
+        # Theta/beta ratio for Fz
+        channel_fz = eeg_data[i, 18, :]
+        freqs, power = welch(channel_fz, fs=sfreq, nperseg=256)
+        theta = np.mean(power[(freqs >= 4) & (freqs <= 8)])
+        beta = np.mean(power[(freqs >= 13) & (freqs <= 30)])
+        trial_features.append(theta / beta)
 
-    # --- Train/test split ---
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y_binary, test_size=0.2, random_state=42
-    )
+        # Alpha asymmetry F3 minus F4
+        ch_f3 = eeg_data[i, 2, :]
+        ch_f4 = eeg_data[i, 19, :]
+        freqs3, pow3 = welch(ch_f3, fs=sfreq, nperseg=256)
+        freqs4, pow4 = welch(ch_f4, fs=sfreq, nperseg=256)
+        alpha_f3 = np.mean(pow3[(freqs3 >= 8) & (freqs3 <= 13)])
+        alpha_f4 = np.mean(pow4[(freqs4 >= 8) & (freqs4 <= 13)])
+        trial_features.append(alpha_f3 - alpha_f4)
 
-    # --- Train SVM classifier ---
-    clf = SVC()
-    clf.fit(X_train, y_train)
+        features.append(trial_features)
+    return features
 
-    # --- Predictions ---
-    y_pred = clf.predict(X_test)
-
-    # --- Evaluation ---
-    print("\nAccuracy:", accuracy_score(y_test, y_pred))
-    print("\nClassification Report:\n", classification_report(y_test, y_pred))
-
+def main():
+    sfreq = 128
     all_features = []
     all_labels = []
 
-    # Loop through participants s01 to s32
+    # Loop through all 32 participants
     for i in range(1, 33):
-        subject_id = f"s{i:02d}"
-        file_path = r"C:\Users\evyne\Documents\NeuroBeat\NeuroBeat\code\phase2\data" + f"\\s{i:02d}.dat"
-        print(f"Loading {file_path}...")
+        file_path = (r"C:\Users\evyne\Documents\NeuroBeat\NeuroBeat"
+                     rf"\code\phase2\data\s{i:02d}.dat")
+        print(f"Loading participant {i:02d}...")
 
         with open(file_path, "rb") as f:
             data = pickle.load(f, encoding="latin1")
 
-        eeg_data = data["data"]     # (40, 40, 8064)
-        labels = data["labels"]     # (40, 4)
+        eeg_data = data["data"]   # (40, 40, 8064)
+        labels = data["labels"]   # (40, 4)
 
-        # Extract features for each trial
-        for trial_idx in range(eeg_data.shape[0]):
-            channel = eeg_data[trial_idx, 0, :]
-            freqs, power = welch(channel, fs=128, nperseg=256)
-            ratio = get_alpha_beta_ratio(freqs, power)
-            all_features.append(ratio)
-            all_labels.append(labels[trial_idx][1]) 
-    # Convert to numpy
-    X = np.array(all_features)
-    X = X.reshape(-1, 1)
+        # Extract 5 features per trial
+        features = extract_features(eeg_data, sfreq)
+        all_features.extend(features)
+
+        # Arousal label for each trial
+        for trial_idx in range(len(features)):
+            all_labels.append(labels[trial_idx][0])
+
+    X = np.array(all_features, dtype=float).reshape(1280, 5)
     y = np.array(all_labels)
+    print(f"\nDataset: {X.shape[0]} samples, {X.shape[1]} features")
 
-    print("Final dataset shape:", X.shape, y.shape)
+    # Median split for binary classification
+    y_binary = np.where(y >= np.median(y), 1, 0)
 
-    # --- Binary conversion (median split) ---
-    median_val = np.median(y)
-    y_binary = np.where(y >= median_val, 1, 0)
-
-    # --- Train/test split ---
+    # Train/test split
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y_binary, test_size=0.2, random_state=42
+        X, y_binary, test_size=0.2, random_state=42, stratify=y_binary
     )
 
-    # --- Train SVM ---
-    clf = SVC()
+    # Train SVM
+    clf = RandomForestClassifier(n_estimators=100, random_state=42)
     clf.fit(X_train, y_train)
 
-    # --- Evaluate ---
+
+
+    # Evaluate
     y_pred = clf.predict(X_test)
+    print(f"\nAccuracy: {accuracy_score(y_test, y_pred):.4f}")
+    print("\nClassification Report:")
+    print(classification_report(y_test, y_pred))
 
-    print("\nAccuracy:", accuracy_score(y_test, y_pred))
-    print("\nClassification Report:\n", classification_report(y_test, y_pred))
+    # -------------------------------
+    # Per-subject classification
+    # Train and test on same participant
+    # -------------------------------
+    accuracies = []
+    for i in range(1, 33):
+        file_path = (r"C:\Users\evyne\Documents\NeuroBeat\NeuroBeat" rf"\code\phase2\data\s{i:02d}.dat")
+    
+        with open(file_path, "rb") as f:
+            data = pickle.load(f, encoding="latin1")
+        
+        eeg_data = data["data"]
+        labels = data["labels"]
+        
+        X = np.array(extract_features(eeg_data, sfreq))
+        y = labels[:, 0]
+        
+        y_binary = np.where(y >= np.median(y), 1, 0)
+        
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y_binary, test_size=0.25, random_state=42
+        )
+        
+        model = RandomForestClassifier(n_estimators=100, random_state=42)
+        model.fit(X_train, y_train)
+        y_pred = model.predict(X_test)
+        acc = accuracy_score(y_test, y_pred)
+        accuracies.append(acc)
+        print(f"Participant {i:02d}: {acc:.3f}")
 
+    print(f"\nAverage Accuracy: {np.mean(accuracies):.3f}")
+    print(f"Min: {np.min(accuracies):.3f}")
+    print(f"Max: {np.max(accuracies):.3f}")
+    
+    best = np.argmax(accuracies) + 1
+    worst = np.argmin(accuracies) + 1
+    print(f"Best participant: {best:02d} ({np.max(accuracies):.3f})")
+    print(f"Worst participant: {worst:02d} ({np.min(accuracies):.3f})")
 if __name__ == "__main__":
     main()
 
