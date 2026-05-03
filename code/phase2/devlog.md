@@ -99,3 +99,62 @@ Updated as we go
 - Plug real labels into classifier and get first real accuracy result
 - Add music panel to dashboard
 - Commit and push everything cleanly
+
+-------
+
+## Entry 3 — 5/1/26
+
+### What we built
+- Loaded DEAP preprocessed .dat files using pickle, each file contains both EEG signals and labels already aligned by trial
+- Wrote load_preprocessed.py from scratch, file loading, feature  extraction loop, label extraction, classifier training and evaluation
+- Extracted alpha/beta ratios for all 40 trials from participant 1 and printed alongside real valence and arousal scores
+- Expanded to all 32 participants, with 1280 total samples
+- Trained SVM classifier on real data for the first time
+
+### What we found
+- First real classification accuracy: 51.5%, which is just above 50% baseline
+- Using only one feature (alpha/beta ratio) from one channel (Fp1)
+- Class 0 recall was 0.79 — model finds calm states reasonably well but struggles to identify high arousal states
+- Trial 21 had valence 0.00 but alpha/beta ratio of 2.628. This shows subjective emotional response and brain state don't always match. This is a  genuine finding worth discussing in the paper
+- Individual variation confirmed, ratios ranged from 2.2 to 3.8 across trials for participant 1
+
+### What we learned
+- 51.5% with one feature is a legitimate baseline in EEG classification research
+- Single-channel alpha/beta ratio alone is not enough to reliably classify arousal states, more features are needed
+- Valence and arousal capture different things — arousal correlates more directly with brain anxiety markers than valence does
+
+### What comes next
+- Add more features like theta/beta ratio, absolute alpha power, F3/F4 asymmetry
+- Use frontal channels specifically (Fz, F3, F4) instead of just Fp1
+- Try different classifiers and compare
+- See if accuracy improves meaningfully with richer features
+- Update dashboard to use preprocessed data instead of BDF files
+
+------
+## Entry 4 — 5/2/26
+
+### What we built
+- Developed a cross-participant classification pipeline that uses the preprocessed DEAP dataset with actual data of 5 features per trial
+- Five features used include: alpha/beta ratio for F3 (feature index 2), Fz (feature index 18), and F4 (feature index 19); theta/beta ratio for Fz and alpha asymmetry for F3 & F4
+- Developed per-subject classification pipeline that iterates on all 32 subjects individually
+- Compared performance of SVM classifier and Random Forest; valence and arousal as target labels
+
+### What we found
+- Accuracy across participants with Random Forest and 5 features as input and valence as target label: 56.25%
+- Valence performed better as target than arousal (56% compared to 51%); frontal alpha performs better as predictor for valence than arousal
+- SVM performed much worse after feature normalization; predicted only one class on everything
+- Per-subject accuracy range averaged 55% but ranged from 20% to 90%
+- Best participant: 17 at 90% accuracy
+- Worst participant: 11 at 20% accuracy
+
+### What we learned
+- Cross-participant EEG classification is genuinely hard and produce mediocre results when one model is applied to everyone
+- The 20% to 90% per-subject range proves individual variation is the
+  core challenge in EEG emotion recognition
+- Frontal alpha predicts valence better than arousal
+- Per-user calibration is scientifically necessary, not just a nice feature
+
+### What comes next
+- Phase 3 hardware integration and live EEG
+- Calibration session: user listens to music clips, rates feelings, system builds a personal model
+- Per-subject pipeline already written, Phase 3 just runs it live on a new user instead of stored DEAP data
