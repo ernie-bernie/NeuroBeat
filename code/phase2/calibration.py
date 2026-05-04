@@ -9,6 +9,12 @@ from scipy.signal import welch
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_val_score
 
+FEATURE_SETS = {
+    "Frontal (F3, Fz, F4)":   [2, 18, 19],
+    "Temporal (T7, T8)":       [7, 25],
+    "Occipital (O1, Oz, O2)":  [13, 14, 31],
+    "All combined":            [2, 7, 13, 14, 18, 19, 25, 31],
+}
 def get_alpha_beta_ratio(frequencies, power):
     alpha_indices = np.where((frequencies >= 8) & (frequencies <= 13))[0]
     beta_indices = np.where((frequencies >= 13) & (frequencies <= 30))[0]
