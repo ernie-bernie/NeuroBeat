@@ -1,264 +1,348 @@
 # dashboard.py
 # NeuroBeat — Phase 2
-# Real-time EEG brain state dashboard
+# Real-time EEG brain state dashboard with calibration
 # Written by Evyn Ernest
 
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 import mne
-from scipy.signal import welch
+import pickle
 import os
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-music_folder = os.path.join(BASE_DIR, "music")
+from scipy.signal import welch
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
 
-# Stops useless outputs
 mne.set_log_level('ERROR')
-# -------------------------------
-# Page config
-# -------------------------------
-st.set_page_config(
-    page_title="NeuroBeat",
-    page_icon="🧠",
-    layout="wide"
-)
 
+st.set_page_config(page_title="NeuroBeat", page_icon="🧠", layout="wide")
 st.title("🧠 NeuroBeat")
 st.caption("EEG Brain State Monitor — Music & Anxiety Research")
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data")
+MUSIC_DIR = os.path.join(BASE_DIR, "music")
+
 # -------------------------------
-# Sidebar — controls
+# Sidebar
 # -------------------------------
 st.sidebar.header("Controls")
-
-#Pick the participant
 participant = st.sidebar.selectbox(
-    "Participant", 
+    "Participant",
     options=list(range(1, 33)),
     format_func=lambda x: f"Participant {x:02d}"
 )
-
-#Pick the channel
-channel_name = st.sidebar.selectbox(
-    "Channel",
-    options=["Fz", "F3", "F4", "Cz", "Pz"]
-)
-
-
-
-#Pick the band
-band_name = st.sidebar.selectbox(
-    "Brain map band",
-    options=["Alpha", "Beta", "Theta"]
-)
-
-band_ranges = {
-    "Alpha": (8, 13),
-    "Beta": (13, 30),
-    "Theta": (4, 8)
-}
-band_low, band_high = band_ranges[band_name]
+sfreq = 128
 
 # -------------------------------
-# Load and filter data
+# Load preprocessed data
 # -------------------------------
 @st.cache_data
 def load_participant(p):
-    path = f"C:\\Users\\evyne\\Documents\\NeuroBeat\\NeuroBeat\\code\\phase2\\data\\s{p:02d}.bdf"
-    raw = mne.io.read_raw_bdf(path, preload=True, verbose=False)
-    raw.pick_types(eeg=True, verbose=False)
-    raw.filter(0.5, 100, fir_window='hamming', verbose=False)
-    raw.notch_filter(50, verbose=False)
-    return raw
+    path = os.path.join(DATA_DIR, f"s{p:02d}.dat")
+    with open(path, "rb") as f:
+        data = pickle.load(f, encoding="latin1")
+    return data["data"], data["labels"]
 
-raw = load_participant(participant)
-st.sidebar.success(f"Loaded participant {participant:02d}")
-
-data, times = raw.get_data(return_times=True)
-ch_index = raw.ch_names.index(channel_name)
-sfreq = raw.info['sfreq']
+eeg_data, labels = load_participant(participant)
 
 # -------------------------------
-# Row 1 — EEG signal + power spectrum
+# Feature extraction
 # -------------------------------
-col1, col2 = st.columns(2)
+def get_alpha_beta_ratio(frequencies, power):
+    alpha_indices = np.where((frequencies >= 8) & (frequencies <= 13))[0]
+    beta_indices = np.where((frequencies >= 13) & (frequencies <= 30))[0]
+    return np.mean(power[alpha_indices]) / np.mean(power[beta_indices])
 
-with col1:
-    st.subheader("Raw EEG Signal")
-    ten_sec = int(10 * sfreq)
-    fig1, ax1 = plt.subplots(figsize=(8, 3))
-    ax1.plot(times[:ten_sec], data[ch_index, :ten_sec], 
-             linewidth=0.8, color="steelblue")
-    ax1.set_xlabel("Time (seconds)")
-    ax1.set_ylabel("Amplitude (µV)")
-    ax1.set_title(f"Channel {channel_name}")
-    plt.tight_layout()
-    st.pyplot(fig1)
-    plt.close()
+def extract_features_from_channels(eeg, sfreq, channels):
+    features = []
+    for i in range(eeg.shape[0]):
+        trial_features = []
+        for p in channels:
+            channel = eeg[i, p, :]
+            freqs, power = welch(channel, fs=sfreq, nperseg=256)
+            alpha = np.mean(power[(freqs >= 8) & (freqs <= 13)])
+            beta = np.mean(power[(freqs >= 13) & (freqs <= 30)])
+            theta = np.mean(power[(freqs >= 4) & (freqs <= 8)])
+            trial_features.append(alpha / (beta + 1e-8))
+            trial_features.append(theta / (beta + 1e-8))
+            trial_features.append(alpha)
+            trial_features.append((alpha + theta) / (beta + 1e-8))
+        features.append(trial_features)
+    return np.array(features)
 
-with col2:
-    st.subheader("Power Spectrum")
-    sixty_sec = int(60 * sfreq)
-    freqs, power = welch(data[ch_index, :sixty_sec], 
-                         fs=sfreq, nperseg=512)
-    fig2, ax2 = plt.subplots(figsize=(8, 3))
-    ax2.plot(freqs, power, color="steelblue", linewidth=0.8)
-    ax2.axvspan(0.5, 4,  alpha=0.15, color="purple", label="Delta")
-    ax2.axvspan(4,   8,  alpha=0.15, color="blue",   label="Theta")
-    ax2.axvspan(8,  13,  alpha=0.15, color="green",  label="Alpha")
-    ax2.axvspan(13, 30,  alpha=0.15, color="orange", label="Beta")
-    ax2.axvspan(30, 100, alpha=0.15, color="red",    label="Gamma")
-    ax2.set_xlabel("Frequency (Hz)")
-    ax2.set_ylabel("Power")
-    ax2.set_xlim(4, 40)
-    ax2.set_ylim(0, power[(freqs >= 4) & (freqs <= 40)].max() * 1.2)
-    ax2.legend(fontsize=8)
-    plt.tight_layout()
-    st.pyplot(fig2)
-    plt.close()
+FEATURE_SETS = {
+    "Frontal (F3, Fz, F4)":   [2, 18, 19],
+    "Temporal (T7, T8)":       [7, 25],
+    "Occipital (O1, Oz, O2)":  [13, 14, 31],
+    "All combined":            [2, 7, 13, 14, 18, 19, 25, 31],
+}
 
+REGION_CHANNELS = {
+    "Frontal (F3, Fz, F4)":   "Frontal lobe — emotional regulation",
+    "Temporal (T7, T8)":       "Temporal lobe — auditory processing",
+    "Occipital (O1, Oz, O2)":  "Occipital lobe — visual and alpha source",
+    "All combined":            "Whole brain — combined regions",
+}
 
-# -------------------------------
-# Row 2 — Brain map
-# -------------------------------
-st.subheader("Brain Activity Map")
-st.caption(f"{band_name} power across all electrodes")
+def run_calibration(eeg, labels, sfreq):
+    indices = np.random.RandomState(42).permutation(40)
+    eeg = eeg[indices]
+    labels = labels[indices]
+    y_all = labels[:, 0]
+    y_binary = np.where(y_all >= np.median(y_all), 1, 0)
 
-def compute_band_map(participant, low, high):
-    raw = load_participant(participant)
-    known_channels = ['Fp1', 'Fp2', 'F7', 'F3', 'Fz', 'F4', 'F8',
-                      'T7', 'C3', 'Cz', 'C4', 'T8',
-                      'P7', 'P3', 'Pz', 'P4', 'P8',
-                      'O1', 'Oz', 'O2', 'FC1', 'FC2',
-                      'CP1', 'CP2', 'FC5', 'FC6', 'CP5', 'CP6',
-                      'AF3', 'AF4', 'PO3', 'PO4']
-    available = [ch for ch in known_channels if ch in raw.ch_names]
-    raw.pick_channels(available)
-    raw.set_montage('standard_1020', on_missing='ignore')
-    data = raw.get_data()
-    sfreq = raw.info['sfreq']
-    sixty_sec = int(60 * sfreq)
-    band_powers = []
-    for ch in range(len(raw.ch_names)):
-        freqs, psd = welch(data[ch, :sixty_sec], fs=sfreq, nperseg=512)
-        band = (freqs >= low) & (freqs <= high)
-        band_powers.append(psd[band].mean())
-    return np.array(band_powers), raw
+    best_score = 0
+    best_name = None
+    results = {}
 
-band_powers, raw_topo = compute_band_map(participant, band_low, band_high)
+    for name, channels in FEATURE_SETS.items():
+        X = extract_features_from_channels(eeg, sfreq, channels)
+        model = RandomForestClassifier(n_estimators=100, random_state=42)
+        scores = cross_val_score(model, X, y_binary, cv=4)
+        mean_score = scores.mean()
+        results[name] = mean_score
+        if mean_score >= 0.70:
+            best_score = mean_score
+            best_name = name
+            break
+        if mean_score > best_score:
+            best_score = mean_score
+            best_name = name
 
-col3, col4, col5 = st.columns([1, 2, 1])
-
-with col4:
-    fig3, ax3 = plt.subplots(figsize=(4, 4))
-    im, _ = mne.viz.plot_topomap(
-        band_powers,
-        raw_topo.info,
-        axes=ax3,
-        show=False,
-        cmap='RdYlGn',
-        vlim=(np.min(band_powers), np.max(band_powers)),
-        extrapolate='head',
-        sphere='eeglab',
-        contours=0,        # removes the contour lines for a cleaner look
-        sensors=False,     # removes the dots entirely
-        outlines='head'    # keeps just the head outline
-)
-    plt.colorbar(im, ax=ax3, shrink=0.7, 
-                 label=f'{band_name} power (µV²/Hz)')
-    ax3.set_title(f"{band_name} power — "
-                  f"{'higher = calmer' if band_name == 'Alpha' else 'higher = more active'}")
-    plt.tight_layout()
-    st.pyplot(fig3)
-    plt.close()
+    return best_name, best_score, results
 
 # -------------------------------
-# Row 3 — Emotion prediction
+# Tabs
 # -------------------------------
-st.subheader("Brain State")
+tab1, tab2 = st.tabs(["📊 Dashboard", "🔧 Calibration"])
 
-# Compute alpha/beta ratio for selected channel
-alpha_idx = (freqs >= 8) & (freqs <= 13)
-beta_idx = (freqs >= 13) & (freqs <= 30)
-ratio = power[alpha_idx].mean() / power[beta_idx].mean()
+# -------------------------------
+# Tab 1 — Dashboard
+# -------------------------------
+with tab1:
+    trial_idx = st.slider("Select trial", 0, 39, 0)
+    trial_eeg = eeg_data[trial_idx]
+    actual_valence = labels[trial_idx][0]
+    actual_arousal = labels[trial_idx][1]
 
-col6, col7, col8 = st.columns(3)
+    col1, col2 = st.columns(2)
 
-with col6:
-    st.metric("Alpha/Beta Ratio", f"{ratio:.2f}")
+    with col1:
+        st.subheader("Raw EEG Signal")
+        channel_data = trial_eeg[18, :]  # Fz
+        time = np.linspace(0, len(channel_data) / sfreq, len(channel_data))
+        ten_sec = int(10 * sfreq)
+        fig1, ax1 = plt.subplots(figsize=(8, 3))
+        ax1.plot(time[:ten_sec], channel_data[:ten_sec],
+                 linewidth=0.8, color="steelblue")
+        ax1.set_xlabel("Time (seconds)")
+        ax1.set_ylabel("Amplitude (µV)")
+        ax1.set_title(f"Channel Fz — Trial {trial_idx + 1}")
+        plt.tight_layout()
+        st.pyplot(fig1)
+        plt.close()
 
-with col7:
-    if ratio > 2.0:
-        st.success("😌 Calm")
-    elif ratio > 1.0:
-        st.warning("😐 Neutral")
+    with col2:
+        st.subheader("Power Spectrum")
+        freqs, power = welch(channel_data, fs=sfreq, nperseg=256)
+        fig2, ax2 = plt.subplots(figsize=(8, 3))
+        ax2.plot(freqs, power, color="steelblue", linewidth=0.8)
+        ax2.axvspan(0.5, 4,  alpha=0.15, color="purple", label="Delta")
+        ax2.axvspan(4,   8,  alpha=0.15, color="blue",   label="Theta")
+        ax2.axvspan(8,  13,  alpha=0.15, color="green",  label="Alpha")
+        ax2.axvspan(13, 30,  alpha=0.15, color="orange", label="Beta")
+        ax2.axvspan(30, 100, alpha=0.15, color="red",    label="Gamma")
+        ax2.set_xlabel("Frequency (Hz)")
+        ax2.set_ylabel("Power")
+        ax2.set_xlim(4, 40)
+        ax2.set_ylim(0, power[(freqs >= 4) & (freqs <= 40)].max() * 1.2)
+        ax2.legend(fontsize=8)
+        plt.tight_layout()
+        st.pyplot(fig2)
+        plt.close()
+
+    st.subheader("Brain Activity Map")
+
+    band_name = st.selectbox("Band", ["Alpha", "Beta", "Theta"])
+    band_ranges = {"Alpha": (8, 13), "Beta": (13, 30), "Theta": (4, 8)}
+    band_low, band_high = band_ranges[band_name]
+
+    known_channels = ['Fp1','AF3','F3','F7','FC5','FC1','C3','T7','CP5',
+                      'CP1','P3','P7','PO3','O1','Oz','Pz','Fp2','AF4',
+                      'Fz','F4','F8','FC6','FC2','Cz','C4','T8','CP6',
+                      'CP2','P4','P8','PO4','O2']
+
+    @st.cache_data
+    def compute_band_map(p, trial, low, high):
+        eeg, _ = load_participant(p)
+        trial_data = eeg[trial]
+        band_powers = []
+        for ch in range(32):
+            freqs, psd = welch(trial_data[ch], fs=128, nperseg=256)
+            band_powers.append(np.mean(psd[(freqs >= low) & (freqs <= high)]))
+        info = mne.create_info(known_channels, sfreq=128, ch_types='eeg')
+        info.set_montage('standard_1020', on_missing='ignore')
+        return np.array(band_powers), info
+
+    band_powers, info = compute_band_map(participant, trial_idx, band_low, band_high)
+
+    col3, col4, col5 = st.columns([1, 2, 1])
+    with col4:
+        fig3, ax3 = plt.subplots(figsize=(4, 4))
+        im, _ = mne.viz.plot_topomap(
+            band_powers, info, axes=ax3, show=False,
+            cmap='RdYlGn',
+            vlim=(np.min(band_powers), np.max(band_powers)),
+            extrapolate='head', sphere='eeglab',
+            contours=0, sensors=False, outlines='head'
+        )
+        plt.colorbar(im, ax=ax3, shrink=0.7, label=f'{band_name} power')
+        ax3.set_title(f"{band_name} power — trial {trial_idx + 1}")
+        plt.tight_layout()
+        st.pyplot(fig3)
+        plt.close()
+
+    st.subheader("Brain State")
+    alpha_idx = (freqs >= 8) & (freqs <= 13)
+    beta_idx = (freqs >= 13) & (freqs <= 30)
+    ratio = power[alpha_idx].mean() / power[beta_idx].mean()
+
+    col6, col7, col8, col9 = st.columns(4)
+    with col6:
+        st.metric("Alpha/Beta Ratio", f"{ratio:.2f}")
+    with col7:
+        if ratio > 2.0:
+            st.success("😌 Calm")
+        elif ratio > 1.0:
+            st.warning("😐 Neutral")
+        else:
+            st.error("😰 Anxious")
+    with col8:
+        st.metric("Actual Valence", f"{actual_valence:.2f}")
+    with col9:
+        st.metric("Actual Arousal", f"{actual_arousal:.2f}")
+
+    if "calibration_result" in st.session_state:
+        best_name = st.session_state["calibration_result"]["best_name"]
+        best_score = st.session_state["calibration_result"]["best_score"]
+        channels = FEATURE_SETS[best_name]
+        X_trial = extract_features_from_channels(
+            eeg_data[trial_idx:trial_idx+1], sfreq, channels)
+        y_all = labels[:, 0]
+        y_binary = np.where(y_all >= np.median(y_all), 1, 0)
+        X_all = extract_features_from_channels(eeg_data, sfreq, channels)
+        model = RandomForestClassifier(n_estimators=100, random_state=42)
+        model.fit(X_all, y_binary)
+        predicted = model.predict(X_trial)[0]
+        st.info(f"Calibrated model predicts: {'😌 Positive valence' if predicted == 1 else '😔 Negative valence'} "
+                f"— using {best_name} (accuracy: {best_score:.0%})")
+
+    st.subheader("Music Recommendation")
+    if ratio < 1.0:
+        music_file = os.path.join(MUSIC_DIR, "Binaural_beats.mp3")
+        music_type = "Binaural Beats"
+        reasoning = ("Alpha/beta ratio below 1.0 indicates an anxious brain state. "
+                     "Binaural beats have been shown to reduce anxiety symptoms "
+                     "better than silence (Paper 6).")
+    elif ratio < 2.0:
+        music_file = os.path.join(MUSIC_DIR, "Classical_clip.mp3")
+        music_type = "Classical Music"
+        reasoning = ("Neutral brain state detected. Classical music is associated "
+                     "with relaxed EEG and measurable alpha increases (Paper 3).")
+    elif ratio < 4.0:
+        music_file = os.path.join(MUSIC_DIR, "Ambient_clip.mp3")
+        music_type = "Ambient Music"
+        reasoning = ("Calm brain state detected. Ambient music maintains relaxed "
+                     "alpha state without overstimulation (Paper 4).")
     else:
-        st.error("😰 Anxious")
+        music_file = os.path.join(MUSIC_DIR, "Upbeat_clip.mp3")
+        music_type = "Upbeat Music"
+        reasoning = ("Very high alpha detected — possible understimulation. "
+                     "Upbeat music maintains optimal alert but relaxed state.")
 
-with col8:
-    st.metric("Alpha Power", f"{power[alpha_idx].mean():.2e}")
-
+    col10, col11 = st.columns([1, 2])
+    with col10:
+        st.info(f"🎵 Now playing: **{music_type}**")
+        if os.path.exists(music_file):
+            with open(music_file, 'rb') as f:
+                st.audio(f.read(), format='audio/mp3')
+    with col11:
+        st.markdown("**Why this music?**")
+        st.write(reasoning)
 
 # -------------------------------
-# Row 4 — Music recommendation
+# Tab 2 — Calibration
 # -------------------------------
-st.subheader("Music Recommendation")
+with tab2:
+    st.subheader(f"Calibrate Participant {participant:02d}")
+    st.write("Calibration tests four different brain region feature sets and "
+             "selects the one that best predicts this participant's emotional "
+             "response to music.")
 
-# Define music logic based on brain state
+    if st.button("Run Calibration"):
+        with st.spinner("Running calibration — testing feature sets..."):
+            progress = st.progress(0)
+            feature_names = list(FEATURE_SETS.keys())
+            results = {}
+            best_score = 0
+            best_name = None
 
-if ratio < 1.0:
-    music_file = os.path.join(music_folder, "Binaural_beats.mp3")
-    music_type = "Binaural Beats"
-    reasoning = (
-        "Your alpha/beta ratio is below 1.0, indicating an anxious brain state. "
-        "Binaural beats in the alpha frequency range (8-13 Hz) have been shown to "
-        "reduce anxiety symptoms better than silence or noise-canceling headphones alone "
-        "(Paper 6 — systematic review of 12 studies). The goal is to entrain your brain "
-        "toward enhanced alpha activity."
-    )
-elif ratio < 2.0:
-    music_file = os.path.join(music_folder, "Classical_clip.mp3")
-    music_type = "Classical Music"
-    reasoning = (
-        "Your alpha/beta ratio is between 1.0 and 2.0, indicating a neutral brain state. "
-        "Classical music has been associated with a relaxed EEG state and measurable "
-        "increases in alpha band power compared to silence (Paper 3). "
-        "The goal is to shift toward enhanced alpha dominance."
-    )
-elif ratio < 4.0:
-    music_file = os.path.join(music_folder, "Ambient_clip.mp3")
-    music_type = "Ambient Music"
-    reasoning = (
-        "Your alpha/beta ratio is between 2.0 and 4.0, indicating a calm brain state. "
-        "Ambient music maintains this relaxed state without overstimulation. "
-        "Research shows pleasant music sustains alpha and theta power in "
-        "already-relaxed participants (Paper 4)."
-    )
-else:
-    music_file = os.path.join(music_folder, "Upbeat_clip.mp3")
-    music_type = "Upbeat Music"
-    reasoning = (
-        "Your alpha/beta ratio is above 4.0, indicating a very calm, possibly "
-        "under-stimulated brain state. Upbeat music provides gentle stimulation "
-        "to maintain engagement without triggering anxiety. The goal is to keep "
-        "you in an optimal alert but relaxed state."
-    )
+            for idx, (name, channels) in enumerate(FEATURE_SETS.items()):
+                progress.progress((idx + 1) / len(FEATURE_SETS))
+                indices = np.random.RandomState(42).permutation(40)
+                eeg_shuffled = eeg_data[indices]
+                labels_shuffled = labels[indices]
+                y_all = labels_shuffled[:, 0]
+                y_binary = np.where(y_all >= np.median(y_all), 1, 0)
+                X = extract_features_from_channels(eeg_shuffled, sfreq, channels)
+                model = RandomForestClassifier(n_estimators=100, random_state=42)
+                scores = cross_val_score(model, X, y_binary, cv=4)
+                mean_score = scores.mean()
+                results[name] = mean_score
+                if mean_score > best_score:
+                    best_score = mean_score
+                    best_name = name
 
-# Display recommendation
-col9, col10 = st.columns([1, 2])
+            st.session_state["calibration_result"] = {
+                "best_name": best_name,
+                "best_score": best_score,
+                "results": results
+            }
 
-with col9:
-    st.info(f"🎵 Now playing: **{music_type}**")
-    with open(music_file, 'rb') as f:
-        audio_bytes = f.read()
-    st.audio(audio_bytes, format='audio/mp3')
+        st.success(f"Calibration complete — best feature set: **{best_name}**")
+        st.metric("Best accuracy", f"{best_score:.1%}")
+        st.caption(REGION_CHANNELS[best_name])
 
-with col10:
-    st.markdown("**Why this music?**")
-    st.write(reasoning)
-    st.caption(f"Alpha/Beta ratio: {ratio:.2f} — "
-               f"{'Anxious' if ratio < 1.0 else 'Neutral' if ratio < 2.0 else 'Calm'} state detected")
-    
+        st.subheader("All feature set results")
+        fig4, ax4 = plt.subplots(figsize=(8, 3))
+        names = list(results.keys())
+        scores = list(results.values())
+        colors = ["green" if s >= 0.70 else "orange" if s >= 0.50 else "red"
+                  for s in scores]
+        bars = ax4.barh(names, scores, color=colors)
+        ax4.axvline(0.70, color="green", linestyle="--", alpha=0.7, label="70% threshold")
+        ax4.axvline(0.50, color="gray", linestyle="--", alpha=0.5, label="Chance level")
+        ax4.set_xlim(0, 1)
+        ax4.set_xlabel("Cross-validation accuracy")
+        ax4.set_title("Feature set comparison")
+        ax4.legend()
+        plt.tight_layout()
+        st.pyplot(fig4)
+        plt.close()
+
+        if best_score >= 0.70:
+            st.success("Model calibrated successfully. Predictions are available in the Dashboard tab.")
+        elif best_score >= 0.50:
+            st.warning("Model calibrated with moderate confidence.")
+        else:
+            st.error("Calibration needs improvement for this participant. "
+                     "Frontal alpha features may not be predictive for this user.")
+    else:
+        st.info("Press the button above to calibrate this participant.")
+        if "calibration_result" in st.session_state:
+            st.write(f"Last calibration: **{st.session_state['calibration_result']['best_name']}** "
+                     f"at {st.session_state['calibration_result']['best_score']:.1%}")  
 
     
 # -------------------------------
