@@ -12,6 +12,7 @@ import os
 from scipy.signal import welch
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_val_score
+import random
 
 mne.set_log_level('ERROR')
 
@@ -238,38 +239,110 @@ with tab1:
         st.info(f"Calibrated model predicts: {'😌 Positive valence' if predicted == 1 else '😔 Negative valence'} "
                 f"— using {best_name} (accuracy: {best_score:.0%})")
 
-    st.subheader("Music Recommendation")
-    if ratio < 1.0:
-        music_file = os.path.join(MUSIC_DIR, "Binaural_beats.mp3")
-        music_type = "Binaural Beats"
-        reasoning = ("Alpha/beta ratio below 1.0 indicates an anxious brain state. "
-                     "Binaural beats have been shown to reduce anxiety symptoms "
-                     "better than silence (Paper 6).")
-    elif ratio < 2.0:
-        music_file = os.path.join(MUSIC_DIR, "Classical_clip.mp3")
-        music_type = "Classical Music"
-        reasoning = ("Neutral brain state detected. Classical music is associated "
-                     "with relaxed EEG and measurable alpha increases (Paper 3).")
-    elif ratio < 4.0:
-        music_file = os.path.join(MUSIC_DIR, "Ambient_clip.mp3")
-        music_type = "Ambient Music"
-        reasoning = ("Calm brain state detected. Ambient music maintains relaxed "
-                     "alpha state without overstimulation (Paper 4).")
-    else:
-        music_file = os.path.join(MUSIC_DIR, "Upbeat_clip.mp3")
-        music_type = "Upbeat Music"
-        reasoning = ("Very high alpha detected — possible understimulation. "
-                     "Upbeat music maintains optimal alert but relaxed state.")
+    MUSIC_CATEGORIES = {
+        "binaural": {
+            "files": ["Binaural_beats.mp3", "tense_01.mp3", "tense_02.mp3", "tense_03.mp3"],
+            "label": "Binaural / Tense",
+            "reasoning": (
+                "Your alpha/beta ratio indicates an anxious brain state. "
+                "Binaural beats in the alpha frequency range have been shown to "
+                "reduce anxiety symptoms better than silence (Paper 6). "
+                "The goal is to entrain your brain toward enhanced alpha activity."
+            )
+        },
+        "classical": {
+            "files": ["Classical_clip.mp3", "classical_01.mp3", "classical_02.mp3", "classical_03.mp3"],
+            "label": "Classical",
+            "reasoning": (
+                "Neutral brain state detected. Classical music is associated with "
+                "a relaxed EEG state and measurable alpha increases (Paper 3). "
+                "The goal is to shift toward enhanced alpha dominance."
+            )
+        },
+        "calm": {
+            "files": ["Ambient_clip.mp3", "calm_01.mp3", "calm_02.mp3", 
+                    "calm_03.mp3", "calm_04.mp3"],
+            "label": "Calm / Ambient",
+            "reasoning": (
+                "Calm brain state detected. Ambient and calm music maintains "
+                "a relaxed alpha state without overstimulation. Research shows "
+                "pleasant music sustains alpha and theta power in already-relaxed "
+                "participants (Paper 4)."
+            )
+        },
+        "upbeat": {
+            "files": ["Upbeat_clip.mp3", "upbeat_01.mp3", "upbeat_02.mp3", 
+                    "upbeat_03.mp3", "upbeat_04.mp3"],
+            "label": "Upbeat",
+            "reasoning": (
+                "Very high alpha detected — possible understimulation. "
+                "Upbeat music provides gentle stimulation to maintain engagement "
+                "without triggering anxiety. The goal is an optimal alert but "
+                "relaxed state."
+            )
+        },
+        "sad": {
+            "files": ["sad_01.mp3", "sad_02.mp3", "sad_03.mp3"],
+            "label": "Melancholic",
+            "reasoning": (
+                "Low valence detected with low arousal. Melancholic music matches "
+                "the current emotional state and can provide comfort through "
+                "emotional validation before gradually shifting toward calm."
+            )
+        },
+        "nature": {
+            "files": ["natrure_01.mp3"],
+            "label": "Nature Sounds",
+            "reasoning": (
+                "Nature sounds have been shown to reduce cortisol levels and "
+                "promote alpha wave activity. Used here to gently shift brain "
+                "state toward calm without musical stimulation."
+            )
+        }
+    }
 
+    def get_music_file(category_key, music_dir):
+        files = MUSIC_CATEGORIES[category_key]["files"]
+        available = [f for f in files if os.path.exists(os.path.join(music_dir, f))]
+        if not available:
+            return None, MUSIC_CATEGORIES[category_key]["label"], MUSIC_CATEGORIES[category_key]["reasoning"]
+        random.seed(trial_idx + participant * 100)
+        filename = random.choice(available)
+        filename = random.choice(available)
+        path = os.path.join(music_dir, filename)
+        return path, MUSIC_CATEGORIES[category_key]["label"], MUSIC_CATEGORIES[category_key]["reasoning"]
+
+
+    # Select category based on ratio and valence
+    if ratio < 1.0:
+        category = "binaural"
+    elif ratio < 2.0:
+        category = "classical"
+    elif ratio < 3.0:
+        category = "calm"
+    elif ratio < 4.0:
+        if actual_valence < 3.0:
+            category = "sad"
+        else:
+            category = "nature"
+    else:
+        category = "upbeat"
+
+    music_file, music_type, reasoning = get_music_file(category, MUSIC_DIR)
+
+    st.subheader("Music Recommendation")
     col10, col11 = st.columns([1, 2])
     with col10:
         st.info(f"🎵 Now playing: **{music_type}**")
-        if os.path.exists(music_file):
+        if music_file and os.path.exists(music_file):
             with open(music_file, 'rb') as f:
                 st.audio(f.read(), format='audio/mp3')
+        else:
+            st.warning("Audio file not found")
     with col11:
         st.markdown("**Why this music?**")
         st.write(reasoning)
+        st.caption(f"Alpha/Beta ratio: {ratio:.2f} — category: {category}")
 
 # -------------------------------
 # Tab 2 — Calibration
