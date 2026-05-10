@@ -13,19 +13,19 @@ The goal of Phase 1 is to build enough understanding of neuroscience, EEG, and m
 - How the brain generates electrical activity and what EEG actually measures
 - What the five frequency bands (delta, theta, alpha, beta, gamma) represent and how they shift with mental state
 - What anxious brain activity looks like in EEG, specifically in the alpha and beta bands
-- How music affects the nervous system — the auditory cortex, rhythm entrainment, dopamine, arousal
+- How music affects the nervous system (the auditory cortex, rhythm entrainment, dopamine, arousal)
 - What the existing research says about music and anxiety, and where the open questions are
 - How the DEAP dataset is structured and what it contains, so we're ready to use it in Phase 2
-- The intuition behind the Fourier transform — the core mathematical idea that makes EEG analysis possible
+- The intuition behind the Fourier transform, the core mathematical idea that makes EEG analysis possible
 
 ## Papers we plan to read
 
 We're aiming for 6–10 peer-reviewed papers across these areas:
 
 - EEG methodology and frequency band interpretation
-- Music and emotion — how different music types affect arousal and valence
+- Music and emotion; how different music types affect arousal and valence
 - Alpha and beta band activity in anxiety and stress
-- Music therapy for anxiety — clinical studies
+- Music therapy for anxiety
 - The DEAP dataset — original paper and studies that used it
 - Foundational neuroscience of the auditory system
 - Long-term direction: Parkinson's disease and epilepsy — how anxiety connects to both conditions
