@@ -37,7 +37,7 @@ Run the dashboard:
 
 ## Data
 
-The DEAP dataset is not included in this repository due to file size. Download the preprocessed Python version from [Kaggle](https://www.kaggle.com/datasets/sayuksh/deap-datasetraw-data) and place the .dat files in `code/phase2/data/`.
+The DEAP dataset is not included in this repository due to file size. Download the preprocessed Python version from [Kaggle](https://www.kaggle.com/datasets/manh123df/deap-dataset) and place the .dat files in `code/phase2/data/`.
 
 ## Key results
 
