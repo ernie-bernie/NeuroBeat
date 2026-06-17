@@ -9,9 +9,9 @@ Investigating the effects of music on neurological brain states, with applicatio
 ## What is this?
 NeuroBeat is a long-term independent research project at the intersection of neuroscience, signal processing, and machine learning.
 
-The core question: can we measure how different types of music shift brain activity — and use that to help people with neurological conditions?
+The core question: can we measure how different types of music shift brain activity and use that to help people with neurological conditions?
 
-This is a multi-year project. Were starting with research and foundations, and building toward real hardware, real data, and a published paper.
+This is a multi-year project. We're starting with research and foundations, and building toward real hardware, real data, and a published paper.
 
 ## Where this started
 
@@ -43,7 +43,7 @@ That's NeuroBeat.
 
 - Literature notes, early visualizations, and a written summary — all documented in this repo.
 
-### Phase 2 (in progress)
+### Phase 2 
 
 Public EEG data and machine learning
 
@@ -64,7 +64,7 @@ Public EEG data and machine learning
 
 - Working Python pipeline, trained ML model, and a formal research writeup.
 
-### Phase 3
+### Phase 3 (In progress)
 
 Real hardware and a live system
 
@@ -107,6 +107,5 @@ Publish and apply
 - Data: DEAP dataset (Phase 2), live EEG (Phase 3)
 
 ### Status
-Phase 1 in progress — building foundations, reading papers, learning the tools.
 
 Follow along as we update this repo with notes, code, and results.
